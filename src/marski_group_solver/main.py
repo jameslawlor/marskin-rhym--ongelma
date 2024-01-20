@@ -1,5 +1,6 @@
 import itertools
-from input_parser import (
+import math
+from marski_group_solver.input_parser import (
     parse_input_args,
     parse_all_students_file,
     parse_banned_combinations_file,
@@ -21,27 +22,48 @@ class StudentGroups:
             f"n_students: {self.n_students} \n"
         )
 
-    def assign_groups(self, desired_group_size=2):
-        self.desired_group_size = desired_group_size
+    def assign_groups(self, min_group_size=2):
+        self.n_groups = math.ceil(self.n_students / min_group_size)
+        all_distributions = []
 
-        all_combinations = []
+        # Generate all combinations of distributing elements into two groups
+        for distribution in itertools.product(
+            range(self.n_groups), repeat=len(self.students)
+        ):
+            groups = [[] for _ in range(self.n_groups)]
 
-        # Generate combinations for each group size
-        print(itertools.batched(self.students))
-        stop
-        # all_combinations = list(set(itertools.permutations(self.students, desired_group_size)))
+            for student, group_index in zip(self.students, distribution):
+                groups[group_index].append(student)
 
-        # print(all_combinations)
+            all_distributions.append(tuple(map(frozenset,groups)))
+
+
+        # Groups must be min_group_size or larger
+        pruned_groupings = tuple([g for g in all_distributions if len(min(g,key=len)) >= min_group_size])
+
+        # convert to set to remove duplicates
+        no_dupes = set(map(frozenset,pruned_groupings))
+        # convert all back to tuples
+        # unique_groupings = []
+        # for _ in no_dupes:
+        #     unique_groupings.append(tuple([tuple(x) for x in _]))
+
+        # print(unique_groupings)
         # Filter out disallowed combinations
+        allowed_groups = []
 
-        allowed_combinations = all_combinations
+        for g in no_dupes:
+            for subgroup in g:
+                if 
+
+        # allowed_groups = all_permutations
         # allowed_combinations = [
         #     combo
         #     for combo in all_combinations
         #     if all(student not in self.banned_combinations for student in combo)
         # ]
 
-        return allowed_combinations
+        return allowed_groups
 
 
 def main():
