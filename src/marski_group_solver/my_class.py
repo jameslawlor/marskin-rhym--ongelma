@@ -18,26 +18,24 @@ class MyClass:
         self.bad_combinations.update(combos_to_add)
 
     def find_valid_groups(self, n_groups):
-        valid_groupings = {}
         all_possible_groupings = self._generate_all_possible_groupings(n_groups)
         groupings_over_min_size = self._remove_groups_under_min_size(
             all_possible_groupings
         )
-        deduped = self._remove_duplicate_groupings(groupings_over_min_size)
         if self.bad_combinations:
-            return self._remove_bad_combinations(deduped)
+            return self._remove_bad_combinations(groupings_over_min_size)
         else:
-            return deduped
+            return groupings_over_min_size
 
     def _is_valid_grouping(self, input_group):
-        print(self.bad_combinations)
-
-        # for subgroup in g:
-        #     for student in self.bad_combinations.keys():
-        #         print(student, subgroup, self.bad_combinations.keys())
-        #         if student in subgroup:
-        #             print(f"Found student {student} in group {subgroup}")
-
+        for subgroup in input_group:
+            for student in self.bad_combinations.keys():
+                if student in subgroup:
+                    blacklist = self.bad_combinations[student]
+                    other_students_in_subgroup = subgroup - {student}
+                    for other_student in other_students_in_subgroup:
+                        if other_student in blacklist:
+                            return False
         return True
 
     def _remove_bad_combinations(self, group_configuration):
