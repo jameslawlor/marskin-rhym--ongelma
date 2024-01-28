@@ -7,9 +7,17 @@ class MyClass:
     ):
         self.students = []
         self.bad_combinations = dict()
+        self.min_group_size = 0
+        self.n_groups = 1
+
+    def set_min_group_size(self, n):
+        self.min_group_size = n
+
+    def set_n_groups(self, n):
+        self.n_groups = n
 
     def __str__(self):
-        return vars(self)
+        return str(vars(self))
 
     def add_students(self, list_of_students):
         self.students += list_of_students
@@ -17,8 +25,8 @@ class MyClass:
     def update_bad_combinations(self, combos_to_add: dict):
         self.bad_combinations.update(combos_to_add)
 
-    def find_valid_groups(self, n_groups):
-        all_possible_groupings = self._generate_all_possible_groupings(n_groups)
+    def find_valid_groups(self):
+        all_possible_groupings = self._generate_all_possible_groupings()
         groupings_over_min_size = self._remove_groups_under_min_size(
             all_possible_groupings
         )
@@ -46,21 +54,32 @@ class MyClass:
 
         return set(valid_groupings)
 
-    def _remove_groups_under_min_size(self, groups, min_size=2):
-        return set(g for g in groups if len(min(g, key=len)) >= min_size)
+    def _remove_groups_under_min_size(
+        self,
+        groups,
+    ):
+        return set(g for g in groups if len(min(g, key=len)) >= self.min_group_size)
 
-    def _generate_all_possible_groupings(self, n_groups):
+    def _generate_all_possible_groupings(self):
         # Generate all combinations of distributing elements into n_groups groups
         all_possible_groupings = []
+
         for distribution in itertools.product(
-            range(n_groups), repeat=len(self.students)
+            range(self.n_groups), repeat=len(self.students)
         ):
-            groups = [[] for _ in range(n_groups)]
+            groups = [[] for _ in range(self.n_groups)]
 
             for student, group_index in zip(self.students, distribution):
                 groups[group_index].append(student)
 
             groups = frozenset(map(frozenset, groups))
             all_possible_groupings.append(groups)
-
         return set(all_possible_groupings)
+
+    def print_solution_nicely(self, solutions):
+        for i, solution in enumerate(solutions):
+            print(f"===== Solution {i+1} ===== ")
+            for j, grp in enumerate(solution):
+                print(f"Group {j+1}:")
+                for student in grp:
+                    print(f"\t {student}")

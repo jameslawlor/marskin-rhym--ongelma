@@ -26,20 +26,24 @@ def test_find_valid_groups(
     my_class = MyClass()
     my_class.add_students(example_students_list)
     my_class.update_bad_combinations(example_banned_combinations_dict)
-    result = my_class.find_valid_groups(n_groups=2)
+    my_class.set_n_groups(2)
+    my_class.set_min_group_size(2)
+    result = my_class.find_valid_groups()
     assert result == expected_solution
 
 
 def test__generate_all_possible_groupings(example_groupings):
     my_class = MyClass()
     my_class.add_students(["Student1", "Student2"])
-    groupings = my_class._generate_all_possible_groupings(n_groups=2)
+    my_class.set_n_groups(2)
+    groupings = my_class._generate_all_possible_groupings()
     assert groupings == example_groupings
 
 
 def test__remove_groups_under_min_size(example_groupings):
     my_class = MyClass()
-    result = my_class._remove_groups_under_min_size(example_groupings, min_size=1)
+    my_class.set_min_group_size(1)
+    result = my_class._remove_groups_under_min_size(example_groupings)
     assert result == {
         frozenset(
             {
