@@ -1,11 +1,11 @@
-FROM python:3.11-slim
+FROM python:3.12-slim
 
-RUN mkdir -p /usr/src/app
+RUN apt-get update
+RUN apt-get install -y build-essential
 
-COPY requirements.txt /usr/src/marski-group-solver/
-RUN pip install -U pip
-RUN pip install -r /usr/src//marski-group-solver/requirements.txt
-COPY . /usr/src//marski-group-solver
-WORKDIR /usr/src//marski-group-solver
+COPY requirements.txt /opt/app/
+RUN pip install -r /opt/app/requirements.txt
+COPY . /opt/app
+WORKDIR /opt/app
 RUN pip install -e .
-CMD ["make"]
+RUN make all
