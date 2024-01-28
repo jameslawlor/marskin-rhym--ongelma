@@ -22,3 +22,12 @@ def example_groupings():
         frozenset({frozenset({"Student2"}), frozenset({"Student1"})}),
         frozenset({frozenset(), frozenset({"Student1", "Student2"})}),
     }
+
+
+@pytest.fixture
+def expected_solution():
+    return {
+        frozenset(
+            {frozenset({"Student1", "Student4"}), frozenset({"Student2", "Student3"})}
+        ),
+    }

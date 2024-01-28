@@ -1,3 +1,4 @@
+import pytest
 from marski_group_solver.my_class import MyClass
 
 
@@ -19,13 +20,14 @@ def test_update_bad_combinations(example_banned_combinations_dict):
     assert my_class.bad_combinations == example_banned_combinations_dict
 
 
-# def test_find_valid_groups(example_students_list, example_banned_combinations_dict):
-#     my_class = MyClass()
-#     my_class.add_students(example_students_list)
-#     my_class.update_bad_combinations(example_banned_combinations_dict)
-#     assert my_class.find_valid_groups(n_groups=2) == [
-#         [["Student1", "Student4"], ["Student2", "Student3"]]
-#     ]
+def test_find_valid_groups(
+    example_students_list, example_banned_combinations_dict, expected_solution
+):
+    my_class = MyClass()
+    my_class.add_students(example_students_list)
+    my_class.update_bad_combinations(example_banned_combinations_dict)
+    result = my_class.find_valid_groups(n_groups=2)
+    assert result == expected_solution
 
 
 def test__generate_all_possible_groupings(example_groupings):
@@ -82,3 +84,33 @@ def test__remove_bad_combinations():
             }
         )
     }
+
+
+@pytest.mark.parametrize(
+    "test_input, expected",
+    [
+        (
+            frozenset(
+                {
+                    frozenset({"Student1", "Student4"}),
+                    frozenset({"Student2", "Student3"}),
+                }
+            ),
+            True,
+        ),
+        (
+            frozenset(
+                {
+                    frozenset({"Student1", "Student2"}),
+                    frozenset({"Student3", "Student4"}),
+                }
+            ),
+            False,
+        ),
+    ],
+)
+def test__is_valid_grouping(test_input, expected):
+    my_class = MyClass()
+    my_class.update_bad_combinations({"Student1": ["Student2", "Student3"]})
+    result = my_class._is_valid_grouping(test_input)
+    assert result == expected
